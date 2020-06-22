@@ -1,0 +1,85 @@
+
+buildscript {
+	ext {
+		springBootVersion = '2.1.7.RELEASE'
+	}
+	
+	repositories {
+		mavenCentral()
+	}
+	
+	
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		
+		// This dependency is exported to consumers, that is to say found on their compile classpath.
+	    //api 'org.apache.commons:commons-math3:3.6.1'
+	
+	    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+	    //implementation 'com.google.guava:guava:28.0-jre'
+	
+	    // Use JUnit test framework
+	    //testImplementation 'junit:junit:4.12'
+	}
+	
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootWar{                        //bootWar Task시 이름 지정
+	archiveBaseName="codingstreet"
+	archiveVersion="0.0.1-SNAPSHOT"
+}
+
+//create a single Jar with all dependencies
+
+bootJar{
+    archiveBaseName="springproject"
+    archiveVersion="0.0.1-SNAPSHOT"
+}
+ 
+
+group = 'com.wato'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = '1.8'     // Java 8버전
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    mavenCentral()
+}
+
+dependencies {
+	annotationProcessor('org.projectlombok:lombok')
+	
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.projectlombok:lombok')
+	//JSP View
+	compile('org.apache.tomcat.embed:tomcat-embed-jasper')
+	compile('javax.servlet:jstl:1.2')
+	
+	//SDK
+    compile('net.nurigo:javaSDK:2.2')
+    
+	// 정적 파일 새로고침
+	compile('org.springframework.boot:spring-boot-devtools') //devtools
+	
+	//MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.1'
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+	
+	//DB
+	runtimeOnly 'org.postgresql:postgresql'
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	
+	// 배포된거 실행시키기 위한 테스트 단계
+	 compile 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	 implementation 'org.springframework.boot:spring-boot-starter-web'
+}
