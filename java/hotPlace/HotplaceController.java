@@ -40,7 +40,7 @@ public class HotplaceController {
 		
 		return "main/test";
 	}
-		// �������������� �α���â���� ������ �̵��� ���ִ� controller
+		// �������������� �α���â���� ������ �̵��� ���ִ�  controller
 	
 	@RequestMapping(value = "/loginView")
 	public String login(HttpServletResponse response, HttpServletRequest request) {
