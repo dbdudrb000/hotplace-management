@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="collabo.wato.springboot.web.board.mapper.BoardMapper">
+
+	<!-- 메모리 조회 -->
+	<select id="selectBoard" resultType="collabo.wato.springboot.web.board.vo.BoardVO" parameterType="collabo.wato.springboot.web.board.vo.BoardVO">
+		SELECT
+			 	boardid
+			,	board_address
+			,	latlng[1] as lng
+			,	latlng[2] as lat
+			,	title
+			,	detail
+			,	feeling
+			,	delyn
+			,	create_dt
+			,	create_user
+			,	update_dt
+			,	update_user
+			,	filepath
+		  FROM "Hotplace"."board"  
+		  <where>
+		  		 AND 1=1
+		  		 AND delyn <![CDATA[<>]]> 'Y'
+               <if test="boardid != '' and boardid != null">
+                  AND boardid = #{boardid}
+               </if>
+               <if test="create_user != '' and create_user != null">
+                  AND create_user = #{create_user}
+               </if>
+               <if test="search != '' and search != null">
+                  AND board_address LIKE '%'||#{search}||'%'          
+               </if>
+               <if test="swLatlngFrom != '' and neLatlngFrom != null">
+                  and ( latlng[2] <![CDATA[>=]]> cast(NULLIF(#{swLatlngFrom},'') as numeric) and latlng[2] <![CDATA[<=]]> cast(NULLIF(#{neLatlngFrom},'') as numeric) )
+               </if>			  
+               <if test="swLatlngTo != '' and neLatlngTo != null">
+				  and ( latlng[1] <![CDATA[>=]]> cast(NULLIF(#{swLatlngTo},'') as numeric) and latlng[1] <![CDATA[<=]]> cast(NULLIF(#{neLatlngTo},'') as numeric) )          
+               </if>
+		  </where>
+		  order by boardid::int ASC
+	</select>
+	
+	<!-- 게시글 등록된 주소 조회 -->
+	<select id="selectBoardAddress" resultType="collabo.wato.springboot.web.board.vo.BoardVO" parameterType="collabo.wato.springboot.web.board.vo.BoardVO">
+		
+		SELECT
+			 address.city AS pkid1
+			,string_agg( address.goo , ',') AS pkid2
+		--	,address.ro
+		FROM (
+				SELECT 
+						 address_city.city
+						,address_city.goo
+				  FROM (
+							SELECT
+								 SPLIT_PART(board_address,' ','1') AS city
+								,SPLIT_PART(board_address,' ','2') AS goo
+							--	,SPLIT_PART(board_address,' ','3') AS ro
+							FROM
+								"Hotplace"."board"
+							WHERE 1 = 1 
+						) AS address_city 
+			  GROUP BY address_city.city, address_city.goo
+			 ) AS address
+					
+		GROUP BY address.city
+
+	</select>
+
+	<!-- 메모리 등록 -->
+	<insert id="insertBoard" parameterType="collabo.wato.springboot.web.board.vo.BoardVO">
+		INSERT INTO "Hotplace"."board"
+		(
+			 	boardid
+			,	board_address
+			,	latlng
+			,	title
+			,	detail
+			,	feeling
+			,	delyn
+			,	create_dt
+			,	create_user
+			,	filepath
+		)
+		VALUES
+		(
+			 	(select count(boardid)+1 from "Hotplace".board)
+			,	#{board_address}
+			,	ARRAY[cast(NULLIF(#{lat},'') as numeric) , cast(NULLIF(#{lng},'') as numeric)]
+			,	#{title}
+			,	#{detail}
+			,	#{feeling}
+			,	'N'
+			,	now()
+			, 	#{create_user}
+			,	#{filepath}
+		)
+				
+	</insert>
+	
+	<!-- 메모리 수정 -->
+	<update id="updateBoard" parameterType="collabo.wato.springboot.web.board.vo.BoardVO">
+		update "Hotplace"."board"
+			<set>
+				<if test="lat != '' and lng != null">
+					latlng = ARRAY[cast(NULLIF(#{lat},'') as numeric) , cast(NULLIF(#{lng},'') as numeric)],
+				</if>
+				<if test="board_address != '' and board_address != null">
+					board_address = #{board_address},
+				</if>
+				<if test="title != '' and title != null">
+					title = #{title},
+				</if>
+				<if test="detail != '' and detail != null">
+					detail = #{detail},
+				</if>
+				<if test="feeling != '' and feeling != null">
+					feeling = #{feeling},
+				</if>
+				<if test="delyn != '' and delyn != null">
+					delyn = #{delyn},
+				</if>
+				<if test="filepath != '' and filepath != null">
+					filepath = #{filepath},
+				</if>
+				update_dt = NOW(),
+				update_user = #{wato_user_id}
+			</set>
+			WHERE 1=1
+		  	  AND boardid = #{boardid}
+	</update>
+	
+	<!-- 메모리 삭제 -->
+	<update id="deleteBoard" parameterType="collabo.wato.springboot.web.board.vo.BoardVO">
+	
+		UPDATE "Hotplace"."board"
+		   SET delyn = 'Y'
+		 WHERE 1=1
+		   AND boardid = #{boardid}
+	</update>
+
+</mapper>
+
