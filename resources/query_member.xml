@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="collabo.wato.springboot.web.member.mapper.MemberMapper">
+	
+	<!-- 회원정보 불러오는 기능  -->
+	<select id="getMember"	resultType="collabo.wato.springboot.web.member.vo.MemberVO" parameterType="collabo.wato.springboot.web.member.vo.MemberVO">
+		SELECT 
+				email
+			, 	nickname
+			,	address
+			,	available
+			, 	"password"
+			, 	username
+			,	phone
+			, 	remark
+			, 	loginyn
+			, 	"type"
+			,	create_dt
+			, 	create_user
+			,	update_dt
+			,	update_user
+			,	latlng
+			,	latlng[2] as lat	-- lat
+			,	latlng[1] as lng	-- lng
+		  FROM "Hotplace"."member"
+		  <where>
+				<if test="email != '' and email != null">
+					AND email = #{email}
+				</if>
+				<if test="available != '' and available != null">
+					AND available = #{available}
+				</if>
+		  </where>
+	</select>
+	
+	<!-- 회원가입 하는 기능  -->
+	<insert id="insertMember" parameterType="collabo.wato.springboot.web.member.vo.MemberVO">
+		INSERT INTO "Hotplace"."member"
+		(
+			email, 		nickname, 		"password", 		username,
+			address,
+			available,
+			latlng,
+			phone, 		remark, 		loginyn, 			"type",
+			create_dt, 	create_user
+		)
+		VALUES
+		(
+			#{email}, 	#{nickname}, 	#{password}, 		#{username},
+			#{address},
+			#{available},
+			ARRAY[cast(NULLIF(#{lat},'') as numeric) , cast(NULLIF(#{lng},'') as numeric)],
+			#{phone}, 	#{remark}, 		#{loginyn}, 		#{type},
+			now(), 		#{create_user}
+		)
+				
+	</insert>
+	
+	<!-- 회원 차단 -->
+	<update id="updateMemeber" parameterType="collabo.wato.springboot.web.member.vo.MemberVO">
+		update "Hotplace"."member"
+			<set>
+				<if test="nickname != '' and nickname != null">
+					nickname = #{nickname},
+				</if>
+				<if test="address != '' and address != null">
+					address = #{address},
+				</if>
+				<if test="password != '' and password != null">
+					password = #{password},
+				</if>
+				<if test="username != '' and username != null">
+					username = #{username},
+				</if>
+				<if test="phone != '' and phone != null">
+					phone = #{phone},
+				</if>
+				<if test="remark != '' and remark != null">
+					remark = #{remark},
+				</if>
+				<if test="loginyn != '' and loginyn != null">
+					loginyn = #{loginyn},
+				</if>
+				<if test="type != '' and type != null">
+					type = #{type},
+				</if>
+				<if test="lat != '' and lng != null">
+					latlng = ARRAY[cast(NULLIF(#{lat},'') as numeric) , cast(NULLIF(#{lng},'') as numeric)],
+				</if>
+				
+				update_dt = NOW(),
+				update_user = #{wato_user_id}
+			</set>
+			WHERE 1=1
+		  	  AND email = #{email}
+		  	 		  	  
+	</update>
+	
+	<update id="preventMemeber" parameterType="collabo.wato.springboot.web.member.vo.MemberVO">
+	
+		UPDATE "Hotplace"."member"
+		   SET available = 'N'
+		 WHERE 1=1
+		   AND email = #{email}
+	</update>
+
+	<!-- SMS 인증번호 등록-->
+	<insert id="upsertAuthCode" parameterType="hashMap">
+		INSERT INTO "Hotplace".sms_auth
+		(
+			phone_number, 		auth_key,
+			create_dt
+		)
+		VALUES(
+			#{phone_number}, 	#{auth_key},
+			now()
+		)
+		ON CONFLICT ( phone_number )
+		DO UPDATE SET
+			auth_key = #{auth_key}
+			,req_cnt = sms_auth.req_cnt + 1
+			,update_dt = now()
+		
+	</insert>
+	
+	<!-- SMS 인증 -->
+	<select id="selectAuthCode" parameterType="hashMap" resultType = "collabo.wato.springboot.web.common.vo.CommonVO">
+		SELECT max_cnt, auth_key FROM "Hotplace".sms_auth WHERE phone_number = #{phone_number}
+	</select>
+	
+	<!-- 회원 좋아요 등록 -->
+	<update id = "upsertLike" parameterType = "collabo.wato.springboot.web.member.vo.MemberVO">
+		UPDATE "Hotplace"."member"
+		   SET cs_like = (select cs_like from "Hotplace"."member" where nickname = #{nickname}) || #{cs_like}
+		WHERE 1=1
+		
+		 AND nickname = #{nickname}
+	</update>
+	
+	<!-- 회원 좋아요 조회  -->
+	<select id = "selectLike" resultType = "collabo.wato.springboot.web.member.vo.MemberVO" parameterType="collabo.wato.springboot.web.member.vo.MemberVO">
+	SELECT 
+		cs_like 
+	FROM "Hotplace"."member"
+		WHERE 1=1
+	
+	AND email = #{email}
+	
+	</select>
+	
+	
+</mapper>
+
