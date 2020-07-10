@@ -35,7 +35,7 @@
 ● 미숙한 활용방법으로 인해 구글링과 여러방법으로 시도함으로써 알맞은 방법으로 해결해나감.
 
 # 테이블 정의서
-![DBtable.PNG](./readmeimg/DBtable.PNG)
+![DBtable.PNG](./static/readmeimg/DBtable.PNG)
 
 # USECASE 
 ● 회원 : 
