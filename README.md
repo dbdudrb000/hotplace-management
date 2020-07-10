@@ -1,3 +1,23 @@
+# 개요
+● 프로젝트명 : Hotplace
+
+● 일정 : 2020.4.25 ~ 2020.5.25
+
+● 팀구성 : 유영규
+
+● 목적 : API에 대한 이해도와 지인분께서 고객의 입장으로 요청으로 인해 시작된 프로젝트 
+        ○ 고객의 요청을 최대한 수용해서 만들려고하는 실력을 기르기위함에 중점
+        ○ API에대한 이해도를 향상시키기 위한 목적
+
+ ● 사용기술 및 개발환경
+        ○ O/S : Windows 10(개발환경)       
+        ○ Server : Tomcat8.5
+        ○ DB : PostgreSQL
+        ○ Pramework : Spring boot, Jquery, mybatis
+        ○ Programming Language : JAVA, HTML, Javascript, CSS
+        ○ Tool : Eclipse
+
+
 # 목적
 ● 카카오맵 API를 사용함으로써 API 분석능력을 기르는 목적
 
@@ -38,6 +58,9 @@
 ![DBtable.PNG](./static/readmeimg/DBtable.PNG)
 
 # USECASE 
+
+![hotplaceUSECASE.PNG](./static/readmeimg/hotplaceUSECASE.PNG)
+
 ● 회원 : 
         자신의 추억게시글 작성을 할 수 있다.
         작성한 게시글을 수정or삭제 할 수 있는 기능
