@@ -57,6 +57,10 @@
 # 테이블 정의서
 ![DBtable.PNG](./static/readmeimg/DBtable.PNG)
 
+
+# DBdiagrame
+![DBuml.PNGG](./static/readmeimg/DBuml.PNG)
+
 # USECASE 
 
 ![hotplaceUSECASE.PNG](./static/readmeimg/hotplaceUSECASE.PNG)
