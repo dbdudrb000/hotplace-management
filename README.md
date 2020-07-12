@@ -10,11 +10,16 @@
         ○ API에대한 이해도를 향상시키기 위한 목적
 
  ● 사용기술 및 개발환경
-        ○ O/S : Windows 10(개발환경)       
+        ○ O/S : Windows 10(개발환경) 
+
         ○ Server : Tomcat8.5
+
         ○ DB : PostgreSQL
+
         ○ Pramework : Spring boot, Jquery, mybatis
+
         ○ Programming Language : JAVA, HTML, Javascript, CSS
+        
         ○ Tool : Eclipse
 
 
